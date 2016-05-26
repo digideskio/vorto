@@ -1,0 +1,9 @@
+namespace examples.mappings.rml
+version 1.0.0
+displayname "PhilipsHue RML Mapping"
+description "Maps PhilipsHue infomodel to RML"
+using com.mycompany.PhilipsHue;1.0.0
+infomodelmapping PhilipsHue_rml {
+	targetplatform rml
+	from PhilipsHue to rml with {cat: "8007"}
+}	

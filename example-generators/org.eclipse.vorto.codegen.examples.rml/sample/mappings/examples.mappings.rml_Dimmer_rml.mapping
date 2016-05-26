@@ -1,0 +1,10 @@
+namespace examples.mappings.rml
+version 1.0.0
+displayname "Dimmer RML Mapping"
+description "Maps Dimmer functionblock to RML"
+using com.mycompany.fb.Dimmer;1.0.0
+functionblockmapping Dimmer_rml {
+	targetplatform rml
+	from Dimmer.configuration.brightness to rml with {i18n_en: "Brightness",i18n_de:"Helligkeit",stretch:"2"}
+	from Dimmer.configuration.dimLevel to rml with {i18n_en: "Dimming Level",i18n_de:"Helligkeitsregler",stretch:"2"}
+}	

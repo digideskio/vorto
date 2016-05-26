@@ -1,0 +1,13 @@
+namespace com.mycompany
+version 1.0.0
+displayname "PhilipsHue"
+description "Information model for PhilipsHue"
+category demo
+using com.mycompany.fb.Dimmer ; 1.0.0
+
+infomodel PhilipsHue {
+
+	functionblocks {
+		dimmer as Dimmer
+	}
+}

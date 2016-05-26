@@ -1,0 +1,8 @@
+namespace com.mycompany.type
+version 1.0.0
+displayname "BrightnessLevel"
+description "Type for BrightnessLevel"
+category demo		
+enum BrightnessLevel {
+	Low,High
+}

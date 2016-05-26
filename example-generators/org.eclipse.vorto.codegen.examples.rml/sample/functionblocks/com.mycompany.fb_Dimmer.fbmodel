@@ -1,0 +1,15 @@
+namespace com.mycompany.fb
+version 1.0.0
+displayname "Dimmer"
+description "Function block model for Dimmer"
+category demo
+using com.mycompany.type.BrightnessLevel ; 1.0.0
+
+functionblock Dimmer {
+	
+	configuration {
+		mandatory brightness as BrightnessLevel
+		mandatory dimLevel as int <MIN 0, MAX 10, SCALING 1>
+	}
+
+}
