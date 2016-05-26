@@ -16,6 +16,7 @@ package org.eclipse.vorto.codegen.api;
 
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.vorto.core.api.model.datatype.Property;
 import org.eclipse.vorto.core.api.model.functionblock.Operation;
 import org.eclipse.vorto.core.api.model.mapping.MappingRule;
@@ -45,4 +46,8 @@ public interface IMappingContext {
 	 * @return list of mapping rule objects
 	 */
 	List<MappingRule> getRulesByStereoType(String stereoTypeName);
+
+	List<MappingRule> getMappingRuleByObject(EObject modelElement);
+
+	boolean hasRules(EObject model);
 }

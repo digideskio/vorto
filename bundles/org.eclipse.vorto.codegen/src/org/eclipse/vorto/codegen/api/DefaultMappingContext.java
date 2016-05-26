@@ -15,14 +15,19 @@
 package org.eclipse.vorto.codegen.api;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.vorto.core.api.model.datatype.Property;
 import org.eclipse.vorto.core.api.model.functionblock.Operation;
+import org.eclipse.vorto.core.api.model.informationmodel.InformationModel;
 import org.eclipse.vorto.core.api.model.mapping.ConfigurationSource;
 import org.eclipse.vorto.core.api.model.mapping.FaultSource;
 import org.eclipse.vorto.core.api.model.mapping.FunctionBlockMappingModel;
+import org.eclipse.vorto.core.api.model.mapping.InfoModelMappingModel;
+import org.eclipse.vorto.core.api.model.mapping.InfomodelSource;
 import org.eclipse.vorto.core.api.model.mapping.MappingModel;
 import org.eclipse.vorto.core.api.model.mapping.MappingRule;
 import org.eclipse.vorto.core.api.model.mapping.OperationSource;
@@ -73,6 +78,25 @@ public class DefaultMappingContext implements IMappingContext {
 		
 		return mappingRules;
 	}
+	
+	public List<MappingRule> getMappingRulesByInformationModel(InformationModel informationModel) {
+		List<MappingRule> mappingRules = new ArrayList<>();
+		
+		for (MappingModel mappingModel : allMappingModels) {
+			if (mappingModel instanceof InfoModelMappingModel) {
+				InfoModelMappingModel imMappingModel = (InfoModelMappingModel)mappingModel;
+				for (MappingRule mappingRule : imMappingModel.getRules()) {
+					for (Source ruleSource : mappingRule.getSources()) {
+						if (ruleSource instanceof InfomodelSource && EcoreUtil.equals(((InfomodelSource)ruleSource).getModel(),informationModel)) {
+							mappingRules.add(mappingRule);
+						}
+					}
+				}
+			}
+		}
+		
+		return mappingRules;
+	}
 
 	@Override
 	public List<MappingRule> getMappingRulesByProperty(Property property) {
@@ -108,27 +132,5 @@ public class DefaultMappingContext implements IMappingContext {
 			}
 		}
 		return mappingRules;
-	}
-
-	@Override
-	public MappingRule getMappingRuleByOperationAndStereoType(Operation operation, String stereoTypeName) {
-		List<MappingRule> operationRules = this.getMappingRulesByOperation(operation);
-		for (MappingRule rule : operationRules) {
-			if (rule.getTarget() instanceof StereoTypeTarget && ((StereoTypeTarget)rule.getTarget()).getName().equalsIgnoreCase(stereoTypeName)) {
-				return rule;
-			}
-		}
-		return null;
-	}
-
-	@Override
-	public MappingRule getMappingRuleByPropertyAndStereoType(Property property, String stereoTypeName) {
-		List<MappingRule> propertyRules = this.getMappingRulesByProperty(property);
-		for (MappingRule rule : propertyRules) {
-			if (rule.getTarget() instanceof StereoTypeTarget && ((StereoTypeTarget)rule.getTarget()).getName().equalsIgnoreCase(stereoTypeName)) {
-				return rule;
-			}
-		}
-		return null;
 	}
 }
