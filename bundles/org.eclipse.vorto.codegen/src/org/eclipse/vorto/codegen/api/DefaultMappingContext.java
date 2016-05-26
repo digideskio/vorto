@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.vorto.core.api.model.datatype.Property;
 import org.eclipse.vorto.core.api.model.functionblock.Operation;
 import org.eclipse.vorto.core.api.model.informationmodel.InformationModel;
+import org.eclipse.vorto.core.api.model.mapping.Attribute;
 import org.eclipse.vorto.core.api.model.mapping.ConfigurationSource;
 import org.eclipse.vorto.core.api.model.mapping.FaultSource;
 import org.eclipse.vorto.core.api.model.mapping.FunctionBlockMappingModel;
@@ -132,5 +133,42 @@ public class DefaultMappingContext implements IMappingContext {
 			}
 		}
 		return mappingRules;
+	}
+
+	@Override
+	public MappingRule getMappingRuleByOperationAndStereoType(Operation operation, String stereoTypeName) {
+		List<MappingRule> operationRules = this.getMappingRulesByOperation(operation);
+		for (MappingRule rule : operationRules) {
+			if (rule.getTarget() instanceof StereoTypeTarget && ((StereoTypeTarget)rule.getTarget()).getName().equalsIgnoreCase(stereoTypeName)) {
+				return rule;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public MappingRule getMappingRuleByPropertyAndStereoType(Property property, String stereoTypeName) {
+		List<MappingRule> propertyRules = this.getMappingRulesByProperty(property);
+		for (MappingRule rule : propertyRules) {
+			if (rule.getTarget() instanceof StereoTypeTarget && ((StereoTypeTarget)rule.getTarget()).getName().equalsIgnoreCase(stereoTypeName)) {
+				return rule;
+			}
+		}
+		return null;
+	}
+
+	public List<MappingRule> getMappingRuleByObject(EObject modelElement) {
+		if (modelElement instanceof InformationModel) {
+			return this.getMappingRulesByInformationModel((InformationModel)modelElement);
+		} else if (modelElement instanceof Property) {
+			return this.getMappingRulesByProperty((Property)modelElement);
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public boolean hasRules(EObject modelElement) {
+		return !getMappingRuleByObject(modelElement).isEmpty();
 	}
 }
