@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -30,28 +31,30 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.vorto.core.api.model.model.ModelId;
 import org.eclipse.vorto.core.ui.model.IModelElement;
 import org.eclipse.vorto.perspective.contentprovider.DefaultTreeModelContentProvider;
 import org.eclipse.vorto.perspective.labelprovider.DefaultTreeModelLabelProvider;
+import org.eclipse.vorto.wizard.mapping.MappingModelWizard;
 
 public abstract class ModelTreeViewer {
 
 	protected ModelProjectTreeViewer treeViewer;
-
+	
 	protected ILocalModelWorkspace localModelWorkspace;
-
+	
 	public ModelTreeViewer(Composite parent, ILocalModelWorkspace localModelWorkspace) {
-		this.treeViewer = createTreeViewer(parent, localModelWorkspace);
+		this.treeViewer = createTreeViewer(parent,localModelWorkspace);
 		this.localModelWorkspace = localModelWorkspace;
 		init();
 		initContextMenu();
 	}
 
 	protected abstract String getLabel();
-
+	
 	protected abstract void initContextMenu();
 
-	private ModelProjectTreeViewer createTreeViewer(Composite parent, ILocalModelWorkspace localModelBrowser) {
+	private ModelProjectTreeViewer createTreeViewer(Composite parent,ILocalModelWorkspace localModelBrowser) {
 		Composite composite = new Composite(parent, SWT.BORDER);
 
 		FormLayout layout = new FormLayout();
@@ -61,7 +64,7 @@ public abstract class ModelTreeViewer {
 		composite.setLayout(layout);
 
 		Label label = new Label(composite, SWT.NONE);
-		label.setBackground(new org.eclipse.swt.graphics.Color(Display.getCurrent(), 58, 90, 130));
+		label.setBackground(new org.eclipse.swt.graphics.Color(Display.getCurrent(),58,90,130));
 		label.setForeground(new org.eclipse.swt.graphics.Color(Display.getCurrent(), 255, 255, 255));
 		label.setText(getLabel());
 
@@ -72,8 +75,7 @@ public abstract class ModelTreeViewer {
 
 		label.setLayoutData(lblFormData);
 
-		ModelProjectTreeViewer treeViewer = new ModelProjectTreeViewer(composite,
-				SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL, localModelBrowser);
+		ModelProjectTreeViewer treeViewer = new ModelProjectTreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL,localModelBrowser);
 		FormData viewerFormData = new FormData();
 		viewerFormData.top = new FormAttachment(label, 10);
 		viewerFormData.left = new FormAttachment(0, 0);
@@ -91,24 +93,29 @@ public abstract class ModelTreeViewer {
 
 		return treeViewer;
 	}
-
+	
 	public void populate(Collection<IModelElement> modelElements) {
 		if (!Display.getDefault().isDisposed()) {
-			 Display.getDefault().syncExec(newViewUpdateRunnable(treeViewer, modelElements));
+			Display.getDefault().syncExec(new Runnable() {
+
+				public void run() {
+					try {
+						treeViewer.setInput(modelElements);
+					} catch (Exception e) {
+						throw new RuntimeException(e);
+					}
+				}
+			});
 		}
 	}
 
-	private Runnable newViewUpdateRunnable(final ModelProjectTreeViewer treeViewer,
-			final Collection<IModelElement> modelElements) {
-		return new Runnable() {
-			public void run() {
-				try {
-					treeViewer.setInput(modelElements);
-				} catch (Exception e) {
-					throw new RuntimeException(e);
-				}
-			}
-		};
+	protected void openMappingWizard() {
+		IModelElement firstElement = (IModelElement) treeViewer.getStructuredSelection().getFirstElement();
+		ModelId modelId = firstElement.getId();
+		WizardDialog dialog = new WizardDialog(PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getShell(), new MappingModelWizard(localModelWorkspace.getProjectBrowser().getSelectedProject(), modelId));
+		dialog.create();
+		dialog.open();
 	}
 
 	protected void init() {

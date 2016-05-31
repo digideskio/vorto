@@ -61,7 +61,7 @@ public class InfomodelTreeViewer extends ModelTreeViewer {
 			public void menuAboutToShow(IMenuManager manager) {
 
 				if (!treeViewer.getStructuredSelection().isEmpty()) {
-					final IModelElement model = (IModelElement) treeViewer.getStructuredSelection().getFirstElement();
+					IModelElement model = (IModelElement) treeViewer.getStructuredSelection().getFirstElement();
 
 					if (model.getId().getModelType() == ModelType.InformationModel) {
 						MenuManager generatorMenuMgr = new MenuManager("Generate Code");
@@ -91,11 +91,16 @@ public class InfomodelTreeViewer extends ModelTreeViewer {
 								return model;
 							}
 						});
+						menuMgr.add(new ProjectAction("New Mapping Model",ImageUtil.getImage("add_exc.gif"),treeViewer.getLocalModelWorkspace()) {
+							@Override
+							public void doAction() {
+								openMappingWizard();
+							}
+						});
 					}
 				}
 
-				manager.add(new ProjectAction("New Information Model", ImageUtil.getImage("add_exc.gif"),
-						treeViewer.getLocalModelWorkspace()) {
+				manager.add(new ProjectAction("New Information Model",ImageUtil.getImage("add_exc.gif"),treeViewer.getLocalModelWorkspace()) {
 					@Override
 					public void doAction() {
 						WizardDialog wizardDialog = new WizardDialog(treeViewer.getControl().getShell(),

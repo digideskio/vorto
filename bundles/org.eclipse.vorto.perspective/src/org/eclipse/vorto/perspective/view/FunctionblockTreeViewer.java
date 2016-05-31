@@ -61,7 +61,7 @@ public class FunctionblockTreeViewer extends ModelTreeViewer {
 			public void menuAboutToShow(IMenuManager manager) {
 
 				if (!treeViewer.getStructuredSelection().isEmpty()) {
-					final IModelElement model = (IModelElement) treeViewer.getStructuredSelection().getFirstElement();
+					IModelElement model = (IModelElement) treeViewer.getStructuredSelection().getFirstElement();
 
 					if (model.getId().getModelType() == ModelType.Functionblock) {
 						menuMgr.add(new ShareModelAction() {
@@ -88,16 +88,20 @@ public class FunctionblockTreeViewer extends ModelTreeViewer {
 								return model;
 							}
 						});
+						menuMgr.add(new ProjectAction("New Mapping Model",ImageUtil.getImage("add_exc.gif"),treeViewer.getLocalModelWorkspace()) {
+							@Override
+							public void doAction() {
+								openMappingWizard();
+							}
+						});
 					}
 				}
 
-				manager.add(new ProjectAction("New Functionblock", ImageUtil.getImage("add_exc.gif"),
-						treeViewer.getLocalModelWorkspace()) {
+				manager.add(new ProjectAction("New Functionblock",ImageUtil.getImage("add_exc.gif"),treeViewer.getLocalModelWorkspace()) {
 					@Override
 					public void doAction() {
 						WizardDialog wizardDialog = new WizardDialog(treeViewer.getControl().getShell(),
-								new FunctionBlockWizard(
-										treeViewer.getLocalModelWorkspace().getProjectBrowser().getSelectedProject()));
+								new FunctionBlockWizard(treeViewer.getLocalModelWorkspace().getProjectBrowser().getSelectedProject()));
 						if (wizardDialog.open() == Window.OK) {
 							populate(treeViewer.getLocalModelWorkspace().getProjectBrowser().getSelectedProject()
 									.getModelElementsByType(ModelType.Functionblock));
