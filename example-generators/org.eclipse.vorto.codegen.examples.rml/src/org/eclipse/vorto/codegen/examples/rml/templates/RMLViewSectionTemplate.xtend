@@ -14,26 +14,19 @@
  *******************************************************************************/
 package org.eclipse.vorto.codegen.examples.rml.templates
 
-import org.eclipse.vorto.codegen.api.IMappingContext
-import org.eclipse.vorto.codegen.api.MappingRuleHelper
+import org.eclipse.vorto.codegen.api.mapping.InvocationContext
 import org.eclipse.vorto.core.api.model.functionblock.FunctionblockModel
 
 class RMLViewSectionTemplate extends AbstractRMLSectionTemplate {
-	
-	private IMappingContext mappingContext;
-	
-	new (IMappingContext mappingContext) {
-		this.mappingContext = mappingContext;
-	}
-		
-	override getContent(FunctionblockModel context) {
+			
+	override getContent(FunctionblockModel context, InvocationContext invocationContext) {
 		'''
 		«IF context.functionblock.configuration != null»
 			«FOR property : context.functionblock.configuration.properties»
-				<controlbox bind="«property.name» stretch="«IF mappingContext.hasRules(property)»«new MappingRuleHelper(mappingContext.getMappingRuleByObject(property).get(0)).getStereoTypeAttribute("rml","stretch").value»«ELSE»1«ENDIF»">
+				<controlbox bind="«property.name» stretch="«invocationContext.getMappedElement(property,"rml").getAttributeValue("stretch","1")»>
 					<localetitle>
-						<en>«IF mappingContext.hasRules(property)»«new MappingRuleHelper(mappingContext.getMappingRuleByObject(property).get(0)).getStereoTypeAttribute("rml","i18n_en").value»«ENDIF»</en>
-						<de>«IF mappingContext.hasRules(property)»«new MappingRuleHelper(mappingContext.getMappingRuleByObject(property).get(0)).getStereoTypeAttribute("rml","i18n_de").value»«ENDIF»</de>
+						<en>«invocationContext.getMappedElement(property,"rml").getAttributeValue("i18n_en","")»</en>
+						<de>«invocationContext.getMappedElement(property,"rml").getAttributeValue("i18n_de","")»</de>
 					</localetitle>
 					«IF isEnumProperty(property)»
 					<toggleswitch bind="«property.name»"/>

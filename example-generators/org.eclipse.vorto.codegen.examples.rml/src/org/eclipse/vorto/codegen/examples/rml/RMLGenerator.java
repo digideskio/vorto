@@ -14,13 +14,12 @@ package org.eclipse.vorto.codegen.examples.rml;
  * Bosch Software Innovations GmbH - Please refer to git log
  *******************************************************************************/
 
-
 import org.eclipse.vorto.codegen.api.ChainedCodeGeneratorTask;
 import org.eclipse.vorto.codegen.api.GenerationResultZip;
 import org.eclipse.vorto.codegen.api.GeneratorTaskFromFileTemplate;
 import org.eclipse.vorto.codegen.api.IGenerationResult;
-import org.eclipse.vorto.codegen.api.IMappingContext;
 import org.eclipse.vorto.codegen.api.IVortoCodeGenerator;
+import org.eclipse.vorto.codegen.api.mapping.InvocationContext;
 import org.eclipse.vorto.codegen.examples.rml.templates.RMLTemplate;
 import org.eclipse.vorto.core.api.model.informationmodel.InformationModel;
 
@@ -32,12 +31,12 @@ import org.eclipse.vorto.core.api.model.informationmodel.InformationModel;
 public class RMLGenerator implements IVortoCodeGenerator {
 		
 	@Override
-	public IGenerationResult generate(InformationModel context, IMappingContext mappingContext) {
+	public IGenerationResult generate(InformationModel context, InvocationContext invocationContext) {
 		GenerationResultZip outputter = new GenerationResultZip(context,getServiceKey());
 		ChainedCodeGeneratorTask<InformationModel> generator = new ChainedCodeGeneratorTask<InformationModel>();
-		generator.addTask(new GeneratorTaskFromFileTemplate<>(new RMLTemplate(mappingContext)));
+		generator.addTask(new GeneratorTaskFromFileTemplate<>(new RMLTemplate()));
 		
-		generator.generate(context, mappingContext, outputter);
+		generator.generate(context, invocationContext, outputter);
 		return outputter;
 	}
 	

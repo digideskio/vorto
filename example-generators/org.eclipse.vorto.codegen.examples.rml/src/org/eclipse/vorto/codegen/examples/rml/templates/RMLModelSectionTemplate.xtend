@@ -14,21 +14,15 @@
  *******************************************************************************/
 package org.eclipse.vorto.codegen.examples.rml.templates
 
-import org.eclipse.vorto.codegen.api.IMappingContext
+import org.eclipse.vorto.codegen.api.mapping.InvocationContext
 import org.eclipse.vorto.core.api.model.datatype.ConstraintIntervalType
 import org.eclipse.vorto.core.api.model.datatype.Enum
 import org.eclipse.vorto.core.api.model.datatype.ObjectPropertyType
 import org.eclipse.vorto.core.api.model.functionblock.FunctionblockModel
 
 class RMLModelSectionTemplate extends AbstractRMLSectionTemplate {
-	
-	private IMappingContext mappingContext;
-	
-	new (IMappingContext mappingContext) {
-		this.mappingContext = mappingContext;
-	}
 		
-	override getContent(FunctionblockModel context) {
+	override getContent(FunctionblockModel context, InvocationContext invocationContext) {
 		'''
 		«IF context.functionblock.configuration != null»
 			«FOR property : context.functionblock.configuration.properties»
